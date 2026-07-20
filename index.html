@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>คู่มือก่อสร้างฐานรากเสาไฟฟ้า 22 เมตร | PEA Foundation Guide</title>
+  <title>คู่มือก่อสร้างและระบบประมาณการฐานรากเสาไฟฟ้า 22 เมตร | PEA Foundation Guide</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -18,18 +18,142 @@
   </header>
 
   <section class="hero">
-    <h2>คู่มือการก่อสร้างฐานรากเสาไฟฟ้า</h2>
-    <p>สรุปวิธีการก่อสร้างและข้อกำหนดที่สำคัญในการก่อสร้างฐานรากเสาไฟฟ้าคอนกรีตอัดแรง ขนาด 22 เมตร อ้างอิงจากคู่มือมาตรฐานของการไฟฟ้าส่วนภูมิภาค</p>
+    <h2>คู่มือการก่อสร้างและประมาณการฐานรากเสาไฟฟ้า</h2>
+    <p>สรุปข้อกำหนดทางวิศวกรรม มาตรฐานงานโยธา และระบบคำนวณปริมาณวัสดุฐานรากเสา คอร. 22 เมตร อ้างอิงการไฟฟ้าส่วนภูมิภาค</p>
   </section>
 
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs-container">
+    <button class="tab-btn active" data-tab="knowledgebase">📖 คู่มือ & ข้อกำหนด</button>
+    <button class="tab-btn" data-tab="specs">🏗️ ประเภทฐานรากวิศวกรรม</button>
+    <button class="tab-btn" data-tab="calculator">🧮 เครื่องมือคำนวณประมาณการ</button>
+  </nav>
+
   <main>
-    <div class="grid-container" id="cardContainer">
-      <!-- Cards will be injected here by script.js -->
-    </div>
+    <!-- TAB 1: Knowledgebase -->
+    <section id="tab-knowledgebase" class="tab-content active">
+      <div class="search-filter-section">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="ค้นหาข้อกำหนด, กำลังอัด, ทางหลวง, 180 กก., IB2-011...">
+        </div>
+        <div class="filter-pills" id="filterPills">
+          <button class="pill active" data-filter="all">ทั้งหมด</button>
+          <button class="pill" data-filter="general">ข้อกำหนดทั่วไป</button>
+          <button class="pill" data-filter="precast">ฐานรากสำเร็จรูป</button>
+          <button class="pill" data-filter="cast_in_place">ฐานรากหล่อในที่</button>
+          <button class="pill" data-filter="anchor">สมอบกยึดโยง</button>
+          <button class="pill" data-filter="highway">ข้อกำหนดทางหลวง</button>
+        </div>
+      </div>
+
+      <div class="grid-container" id="cardContainer">
+        <!-- Cards will be injected here by script.js -->
+      </div>
+    </section>
+
+    <!-- TAB 2: Foundation Specs Table -->
+    <section id="tab-specs" class="tab-content">
+      <div class="specs-header">
+        <h3>ตารางเปรียบเทียบรูปแบบและสเปกฐานรากเสา คอร. 22 เมตร</h3>
+        <p>แสดงข้อมูลขนาด ปริมาณวัสดุ การรับน้ำหนักดิน และเลขที่แบบมาตรฐาน กฟภ.</p>
+      </div>
+      <div class="table-responsive">
+        <table class="specs-table">
+          <thead>
+            <tr>
+              <th>รหัส / แบบ</th>
+              <th>ชื่อรูปแบบฐานราก</th>
+              <th>ประเภท</th>
+              <th>ขนาด (กxยxส)</th>
+              <th>คอนกรีต</th>
+              <th>เหล็กเสริม</th>
+              <th>การรับน้ำหนักดิน</th>
+              <th>เลขที่แบบอ้างอิง</th>
+            </tr>
+          </thead>
+          <tbody id="specsTableBody">
+            <!-- Injected by script.js -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: Estimator Calculator -->
+    <section id="tab-calculator" class="tab-content">
+      <div class="calculator-card">
+        <div class="calc-header">
+          <h3>🧮 เครื่องมือคำนวณปริมาณวัสดุและประมาณการค่าก่อสร้าง</h3>
+          <p>เลือกรูปแบบฐานรากและระยะปรับต่างระดับดิน (VARY) เพื่อประมาณการค่าวัสดุ ค่าแรง และปริมาณคอนกรีต/ทราย</p>
+        </div>
+
+        <form id="calcForm" class="calc-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="selectModel">รูปแบบฐานรากมาตรฐาน กฟภ.:</label>
+            <select id="selectModel" class="form-control">
+              <!-- Options injected by script.js -->
+            </select>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="selectVary">ระยะต่างระดับดิน (VARY):</label>
+              <select id="selectVary" class="form-control">
+                <option value="0.00">0.00 ม. (ระดับดินปกติ)</option>
+                <option value="0.50">0.50 ม.</option>
+                <option value="1.00">1.00 ม.</option>
+                <option value="1.50">1.50 ม.</option>
+                <option value="2.00">2.00 ม.</option>
+                <option value="2.50">2.50 ม.</option>
+                <option value="3.00">3.00 ม. (ต่างระดับสูงสุด)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="inputQuantity">จำนวนชุดฐานราก:</label>
+              <input type="number" id="inputQuantity" class="form-control" value="1" min="1" max="100">
+            </div>
+          </div>
+        </form>
+
+        <div class="calc-results" id="calcResults">
+          <h4>📊 ผลการประมาณการก่อสร้าง (Estimated Quantities & Cost)</h4>
+          <div class="results-grid">
+            <div class="result-box total-cost">
+              <span class="res-label">ประมาณการราคารวม</span>
+              <span class="res-value" id="resTotalCost">0 บาท</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">ประมาณการค่าวัสดุสิ่งของ</span>
+              <span class="res-value" id="resMaterialCost">0 บาท</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">ประมาณการค่าแรงงาน</span>
+              <span class="res-value" id="resLaborCost">0 บาท</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">ปริมาณคอนกรีตที่ใช้</span>
+              <span class="res-value" id="resConcreteVol">0 ลบ.ม.</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">น้ำหนักเหล็กเสริมโดยประมาณ</span>
+              <span class="res-value" id="resRebarWeight">0 กก.</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">ปริมาณทรายหยาบอัดแน่น</span>
+              <span class="res-value" id="resSandVol">0 ลบ.ม.</span>
+            </div>
+          </div>
+          <div class="ref-drawing-box">
+            <span>📌 เลขที่แบบแปลนมาตรฐานอ้างอิง: <strong id="resDrawingNo">-</strong></span>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer>
-    <p>&copy; 2026 PEA Foundation Guide. ข้อมูลอ้างอิงจากคู่มือมาตรฐานการก่อสร้างสายส่งไฟฟ้าแรงสูง 115 กิโลโวลต์</p>
+    <p>&copy; 2026 PEA Foundation Guide. ข้อมูลอ้างอิงจากคู่มือมาตรฐานการก่อสร้างสายส่งไฟฟ้าแรงสูง 115 กิโลโวลต์ การไฟฟ้าส่วนภูมิภาค</p>
   </footer>
 
   <!-- Modal -->
