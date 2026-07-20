@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Elements
   const cardContainer = document.getElementById('cardContainer');
   const searchInput = document.getElementById('searchInput');
@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeBtn = document.getElementById('closeBtn');
   const themeToggle = document.getElementById('themeToggle');
   const htmlDoc = document.documentElement;
+
+  // Settings & DB Elements
+  const settingsBtn = document.getElementById('settingsBtn');
+  const settingsModalOverlay = document.getElementById('settingsModalOverlay');
+  const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+  const supaUrl = document.getElementById('supaUrl');
+  const supaKey = document.getElementById('supaKey');
+  const saveSupaBtn = document.getElementById('saveSupaBtn');
+  const clearSupaBtn = document.getElementById('clearSupaBtn');
+  const dbStatusBadge = document.getElementById('dbStatusBadge');
+  const dbStatusText = document.getElementById('dbStatusText');
 
   // Tabs
   const tabBtns = document.querySelectorAll('.tab-btn');
@@ -27,6 +38,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const resDrawingNo = document.getElementById('resDrawingNo');
 
   let currentFilter = 'all';
+  let currentFoundationData = [];
+  let currentFoundationTypes = [];
+  let currentPriceSpecs = [];
+
+  // --- UPDATE DATABASE STATUS BADGE ---
+  function updateDbStatus() {
+    if (SupabaseService.isConfigured) {
+      dbStatusBadge.querySelector('.status-dot').classList.add('connected');
+      dbStatusText.textContent = 'สถานะฐานข้อมูล: เชื่อมต่อ Supabase Live Data';
+    } else {
+      dbStatusBadge.querySelector('.status-dot').classList.remove('connected');
+      dbStatusText.textContent = 'สถานะฐานข้อมูล: ใช้ข้อมูลสำรอง (Static Data)';
+    }
+  }
+
+  // --- LOAD DATA (SUPABASE / FALLBACK) ---
+  async function loadAllData() {
+    currentFoundationData = await SupabaseService.getFoundationData();
+    currentFoundationTypes = await SupabaseService.getFoundationTypes();
+    currentPriceSpecs = await SupabaseService.getPriceEstimatorSpecs();
+
+    updateDbStatus();
+    renderCards();
+    renderSpecsTable();
+    initCalculator();
+  }
 
   // --- TAB NAVIGATION ---
   tabBtns.forEach(btn => {
@@ -42,15 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- RENDER KNOWLEDGEBASE CARDS ---
   function renderCards() {
+    if (!cardContainer) return;
     cardContainer.innerHTML = '';
-    const query = searchInput.value.toLowerCase().trim();
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
-    const filtered = foundationData.filter(item => {
+    const filtered = currentFoundationData.filter(item => {
       const matchesCategory = currentFilter === 'all' || item.category === currentFilter;
       const matchesQuery = query === '' || 
         item.title.toLowerCase().includes(query) || 
         item.summary.toLowerCase().includes(query) ||
-        item.details.some(d => d.toLowerCase().includes(query)) ||
+        (Array.isArray(item.details) && item.details.some(d => d.toLowerCase().includes(query))) ||
         (item.drawingNo && item.drawingNo.toLowerCase().includes(query));
       
       return matchesCategory && matchesQuery;
@@ -69,12 +107,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const card = document.createElement('div');
       card.classList.add('card');
       card.innerHTML = `
-        <span class="card-tag">${item.categoryName}</span>
-        <div class="card-icon">${item.icon}</div>
+        <span class="card-tag">${item.categoryName || item.category}</span>
+        <div class="card-icon">${item.icon || '📌'}</div>
         <h3>${item.title}</h3>
         <p class="summary">${item.summary}</p>
         <div class="card-footer">
-          <span>แบบอ้างอิง: ${item.drawingNo}</span>
+          <span>แบบอ้างอิง: ${item.drawingNo || '-'}</span>
           <span>อ่านเพิ่ม ➔</span>
         </div>
       `;
@@ -105,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const specsBody = document.getElementById('specsTableBody');
     if (!specsBody) return;
 
-    specsBody.innerHTML = foundationTypes.map(item => `
+    specsBody.innerHTML = currentFoundationTypes.map(item => `
       <tr>
         <td><strong>${item.code}</strong></td>
         <td>${item.name}</td>
@@ -123,8 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function initCalculator() {
     if (!selectModel) return;
 
-    // Populate select options
-    selectModel.innerHTML = priceEstimatorSpecs.map(spec => `
+    selectModel.innerHTML = currentPriceSpecs.map(spec => `
       <option value="${spec.id}">${spec.name} (${spec.drawingNo})</option>
     `).join('');
 
@@ -133,11 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const varyFactor = parseFloat(selectVary.value) || 0;
       const qty = parseInt(inputQuantity.value) || 1;
 
-      const spec = priceEstimatorSpecs.find(s => s.id === specId);
+      const spec = currentPriceSpecs.find(s => s.id === specId);
       if (!spec) return;
 
-      // Adjustment factor for VARY depth (increases concrete, rebar, formwork & cost proportional to depth)
-      const depthMultiplier = 1 + (varyFactor * 0.15); // ~15% increase per meter of VARY depth
+      const depthMultiplier = 1 + (varyFactor * 0.15);
 
       const matCostSingle = spec.baseMaterialCost * depthMultiplier;
       const labCostSingle = spec.baseLaborCost * depthMultiplier;
@@ -163,17 +199,18 @@ document.addEventListener('DOMContentLoaded', () => {
     selectVary.addEventListener('change', calculate);
     inputQuantity.addEventListener('input', calculate);
 
-    calculate(); // Initial calculation
+    calculate();
   }
 
   // --- MODAL FUNCTIONS ---
   function openModal(data) {
-    modalTitle.innerHTML = `${data.icon} ${data.title}`;
+    modalTitle.innerHTML = `${data.icon || '📌'} ${data.title}`;
     
-    const detailsHtml = data.details.map(detail => `<li>${detail}</li>`).join('');
+    const detailsArr = Array.isArray(data.details) ? data.details : [data.details];
+    const detailsHtml = detailsArr.map(detail => `<li>${detail}</li>`).join('');
     modalContent.innerHTML = `
       <div style="margin-bottom: 1rem; font-weight: 600; color: var(--primary-color);">
-        📌 เลขที่แบบมาตรฐานอ้างอิง: ${data.drawingNo}
+        📌 เลขที่แบบมาตรฐานอ้างอิง: ${data.drawingNo || '-'}
       </div>
       <ul>${detailsHtml}</ul>
     `;
@@ -189,10 +226,59 @@ document.addEventListener('DOMContentLoaded', () => {
   modalOverlay.addEventListener('click', (e) => {
     if (e.target === modalOverlay) closeModal();
   });
-  
+
+  // --- SETTINGS MODAL & SUPABASE CONFIG ---
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', () => {
+      const { url, key } = SupabaseService.getConfig();
+      supaUrl.value = url;
+      supaKey.value = key;
+      settingsModalOverlay.classList.add('active');
+    });
+  }
+
+  if (closeSettingsBtn) {
+    closeSettingsBtn.addEventListener('click', () => {
+      settingsModalOverlay.classList.remove('active');
+    });
+  }
+
+  if (saveSupaBtn) {
+    saveSupaBtn.addEventListener('click', async () => {
+      const url = supaUrl.value.trim();
+      const key = supaKey.value.trim();
+
+      if (!url || !key) {
+        alert("กรุณากรอกทั้ง Supabase URL และ Anon Key ครับ");
+        return;
+      }
+
+      SupabaseService.saveConfig(url, key);
+      alert("บันทึกการตั้งค่าแล้ว! กำลังเชื่อมต่อฐานข้อมูล Supabase...");
+      settingsModalOverlay.classList.remove('active');
+
+      await loadAllData();
+    });
+  }
+
+  if (clearSupaBtn) {
+    clearSupaBtn.addEventListener('click', async () => {
+      localStorage.removeItem('PEA_SUPABASE_URL');
+      localStorage.removeItem('PEA_SUPABASE_KEY');
+      supaUrl.value = '';
+      supaKey.value = '';
+      SupabaseService.init();
+      alert("ยกเลิกการเชื่อมต่อ Supabase แล้ว กลับไปใช้ข้อมูลสำรอง");
+      settingsModalOverlay.classList.remove('active');
+
+      await loadAllData();
+    });
+  }
+
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+    if (e.key === 'Escape') {
       closeModal();
+      if (settingsModalOverlay) settingsModalOverlay.classList.remove('active');
     }
   });
 
@@ -208,8 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Initializations
-  renderCards();
-  renderSpecsTable();
-  initCalculator();
+  // Initial load
+  await loadAllData();
 });
