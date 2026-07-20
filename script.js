@@ -41,17 +41,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   const resSandVol = document.getElementById('resSandVol');
   const resDrawingNo = document.getElementById('resDrawingNo');
 
-  // New On-Site & Material Elements
-  const onsiteGrid = document.getElementById('onsiteGrid');
-  const checklistsContainer = document.getElementById('checklistsContainer');
+  // Cost Estimator Elements
+  const summaryContainer = document.getElementById('summaryContainer');
   const selectMatFoundation = document.getElementById('selectMatFoundation');
   const inputMatQuantity = document.getElementById('inputMatQuantity');
-  const resTotalConcrete = document.getElementById('resTotalConcrete');
-  const resCementBags = document.getElementById('resCementBags');
-  const resSandCube = document.getElementById('resSandCube');
-  const resStoneCube = document.getElementById('resStoneCube');
-  const resWater = document.getElementById('resWater');
-  const resExtraSand = document.getElementById('resExtraSand');
+  const resTotalNetPrice = document.getElementById('resTotalNetPrice');
+  const resBaseCost = document.getElementById('resBaseCost');
+  const resTotalMatCost = document.getElementById('resTotalMatCost');
+  const resTotalLabCost = document.getElementById('resTotalLabCost');
+  const resFactorF = document.getElementById('resFactorF');
 
   // Sag & Tension Elements
   const selectConductor = document.getElementById('selectConductor');
@@ -93,9 +91,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderClearancesAndRaking();
     
     // Render New Sections
+    renderExecutiveSummary();
     renderOnSiteGuide();
     renderChecklists();
-    initMaterialCalculator();
+    initCostEstimator();
     
     initCalculator();
     initSagCalculator();
@@ -270,8 +269,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // --- RENDER EXECUTIVE SUMMARY ---
+  function renderExecutiveSummary() {
+    if (!summaryContainer || typeof executiveSummaryData === 'undefined') return;
+
+    summaryContainer.innerHTML = executiveSummaryData.map(section => `
+      <div class="summary-card">
+        <h4>${section.topic}</h4>
+        <ul class="summary-list">
+          ${section.details.map(detail => `<li>${detail}</li>`).join('')}
+        </ul>
+      </div>
+    `).join('');
+  }
+
   // --- RENDER ON-SITE GUIDE ---
   function renderOnSiteGuide() {
+    const onsiteGrid = document.getElementById('onsiteGrid');
     if (!onsiteGrid || typeof onSiteGuideData === 'undefined') return;
     
     onsiteGrid.innerHTML = onSiteGuideData.map(step => `
@@ -286,6 +300,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- RENDER CHECKLISTS ---
   function renderChecklists() {
+    const checklistsContainer = document.getElementById('checklistsContainer');
     if (!checklistsContainer || typeof checklistData === 'undefined') return;
     
     checklistsContainer.innerHTML = checklistData.map((category, idx) => `
@@ -303,44 +318,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
   }
 
-  // --- MATERIAL CALCULATOR (1:2:4 Mix) ---
-  function initMaterialCalculator() {
-    if (!selectMatFoundation || typeof foundationTypes === 'undefined') return;
+  // --- COST ESTIMATOR (FACTOR F) ---
+  function initCostEstimator() {
+    if (!selectMatFoundation || typeof costEstimationData === 'undefined') return;
 
-    selectMatFoundation.innerHTML = foundationTypes.map(f => `
-      <option value="${f.code}">${f.code} - ${f.name} (คอนกรีต ${f.concreteVol} คิว)</option>
+    const foundations = costEstimationData.foundationPrices;
+    const factorF = costEstimationData.factorF.standardValue;
+
+    selectMatFoundation.innerHTML = foundations.map(f => `
+      <option value="${f.code}">${f.code} - ${f.desc}</option>
     `).join('');
 
-    function calculateMaterials() {
+    function calculateCosts() {
       const fCode = selectMatFoundation.value;
       const qty = parseInt(inputMatQuantity.value) || 1;
-      const foundation = foundationTypes.find(f => f.code === fCode);
+      const foundation = foundations.find(f => f.code === fCode);
       if (!foundation) return;
 
-      const totalConcrete = foundation.concreteVol * qty; // Cubic Meters
+      const matCost = foundation.mat * qty;
+      const labCost = foundation.lab * qty;
+      const baseCost = matCost + labCost;
+      const totalNetPrice = Math.round(baseCost * factorF);
 
-      // Structural Concrete 1:2:4 per m3 (320kg cement, 0.45 sand, 0.90 stone, 180L water)
-      // Note: 1 bag of Portland cement is 50kg. So 320kg = 6.4 bags per m3.
-      const cementBags = Math.ceil((320 * totalConcrete) / 50);
-      const sandCube = (0.45 * totalConcrete).toFixed(2);
-      const stoneCube = (0.90 * totalConcrete).toFixed(2);
-      const waterLiters = Math.round(180 * totalConcrete);
-      
-      // Lean concrete & sand base (rough estimate: 0.6 m3 per foundation base)
-      const extraSand = (0.60 * qty).toFixed(2);
-
-      resTotalConcrete.textContent = `${totalConcrete.toFixed(2)} ลบ.ม. (คิว)`;
-      resCementBags.textContent = `${cementBags.toLocaleString('th-TH')} ถุง (50กก.)`;
-      resSandCube.textContent = `${sandCube} คิว (ลบ.ม.)`;
-      resStoneCube.textContent = `${stoneCube} คิว (ลบ.ม.)`;
-      resWater.textContent = `${waterLiters.toLocaleString('th-TH')} ลิตร`;
-      resExtraSand.textContent = `${extraSand} คิว (ลบ.ม.)`;
+      resTotalNetPrice.textContent = \`\${totalNetPrice.toLocaleString('th-TH')} บาท\`;
+      resBaseCost.textContent = \`\${baseCost.toLocaleString('th-TH')} บาท\`;
+      resTotalMatCost.textContent = \`\${matCost.toLocaleString('th-TH')} บาท\`;
+      resTotalLabCost.textContent = \`\${labCost.toLocaleString('th-TH')} บาท\`;
+      resFactorF.textContent = \`\${factorF} (สำหรับค่างานต้นทุน \${baseCost.toLocaleString('th-TH')} บาท)\`;
     }
 
-    selectMatFoundation.addEventListener('change', calculateMaterials);
-    inputMatQuantity.addEventListener('input', calculateMaterials);
+    selectMatFoundation.addEventListener('change', calculateCosts);
+    inputMatQuantity.addEventListener('input', calculateCosts);
 
-    calculateMaterials();
+    calculateCosts();
   }
 
   // --- SAG & TENSION CALCULATOR (T = W * l^2 / 8s) ---
