@@ -826,3 +826,77 @@ footer {
     padding: 1.5rem;
   }
 }
+
+/* On-Site Guide Grid */
+.onsite-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.onsite-card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
+  position: relative;
+  transition: var(--transition);
+}
+.onsite-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary-color);
+}
+.step-badge {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background-color: var(--primary-color);
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(11,61,145,0.3);
+}
+
+/* Checklists */
+.checklists-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.checklist-card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
+}
+.checklist-card h4 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--icon-bg);
+}
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+.check-item input[type="checkbox"] {
+  margin-top: 5px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+.check-item label {
+  font-size: 0.95rem;
+  cursor: pointer;
+}

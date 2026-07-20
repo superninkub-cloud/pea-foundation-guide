@@ -80,3 +80,36 @@ INSERT INTO public.foundation_data (id, category, category_name, title, icon, su
 ('tech_ch4_erection', 'erection', 'งานปักเสา คอร.', 'การปักเสา คอร. 22 เมตร และการตั้งค่าเผื่อการเอียง (Raking)', '🚜', 'วิธีการใช้รถเครนยกปักเสา การรัดสลิง 2 จุด และตารางค่าเผื่อการเอียงเสาแต่ละชนิด', '["การยกเสา: ต้องใช้สลิงขนาด 3/4 นิ้ว ถักห่วงหัว-ท้ายความยาวตั้งแต่ 10 เมตรขึ้นไป รัดสลิงแบบสแปรค 2 จุด ห่างจากปลายเสาประมาณ 7-9 เมตร", "การปรับแนวตั้งฉาก: ใช้ลูกดิ่ง 3 ขา ตรวจสอบแนวตั้งดิ่งของเสาทั้งสองด้าน", "ตารางค่าเผื่อเอียง (Raking Allowances):\\n  • เสาทางตรง (TG): เอียง 12 - 15 ซม.\\n  • เสาทางโค้ง (SA): เอียง 0 - 25 ซม.\\n  • เสาคู่ไม่มีสายยึดโยง: เอียง 30 - 50 ซม.\\n  • เสาต้นก่อนเข้าทางโค้ง (AS): เอียง 20 - 25 ซม."]', 'รูปที่ 8-18 หน้า 4-8 ถึง 4-13'),
 ('tech_ch5_stringing', 'stringing', 'งานพาดสาย 115 kV', 'เทคนิคการพาดสาย 115 kV (Full Tension & Slack Span)', '⚡', '8 ขั้นตอนการพาดสายแบบรับแรงดึงเต็มพิกัด และสูตรคำนวณแรงดึง T = W*l²/8s', '["8 ขั้นตอนการพาดสาย Full Tension: 1. วางแผน 2. ตั้งรีลสาย 3. ติดรอกและพาดเชือกนำ 4. ลากสาย 5. แต่งสายดึง Sag 6. จับยึดสาย 7. เข้าเขี้ยวต่อสาย/สเปเซอร์ 8. ต่อสายดิน", "สายไฟฟ้า: ใช้สายอลูมิเนียมเปลือย 400 ตร.มม. และสายล่อฟ้า OHGW ลวดเหล็กตีเกลียว 35/95 ตร.มม.", "ระยะหย่อนยาน (Sag): คำนวณจากสูตร T = (W * l^2) / (8 * s) โดยปรับตามตารางอุณหภูมิ 35-40°C"]', 'SA02-015/19089, SA1-015/31061')
 ON CONFLICT (id) DO NOTHING;
+
+-- 6. ตารางบันทึกการตรวจสอบหน้างาน (construction_checklists) สำหรับพัฒนาต่อยอด
+CREATE TABLE IF NOT EXISTS public.construction_checklists (
+    id SERIAL PRIMARY KEY,
+    project_name TEXT NOT NULL,
+    checklist_category TEXT NOT NULL,
+    item_description TEXT NOT NULL,
+    is_checked BOOLEAN DEFAULT false,
+    checked_by TEXT,
+    checked_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 7. ตารางบันทึกการสั่งวัสดุ (material_orders) สำหรับพัฒนาต่อยอด
+CREATE TABLE IF NOT EXISTS public.material_orders (
+    id SERIAL PRIMARY KEY,
+    project_name TEXT NOT NULL,
+    foundation_type TEXT NOT NULL,
+    quantity INT NOT NULL,
+    cement_bags INT NOT NULL,
+    sand_cube NUMERIC NOT NULL,
+    stone_cube NUMERIC NOT NULL,
+    water_liters INT NOT NULL,
+    ordered_by TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.construction_checklists ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.material_orders ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow Public Read Access" ON public.construction_checklists FOR SELECT USING (true);
+CREATE POLICY "Allow Public Insert" ON public.construction_checklists FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow Public Read Access" ON public.material_orders FOR SELECT USING (true);
+CREATE POLICY "Allow Public Insert" ON public.material_orders FOR INSERT WITH CHECK (true);

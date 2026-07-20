@@ -31,18 +31,100 @@
 
   <!-- Navigation Tabs -->
   <nav class="nav-tabs-container">
-    <button class="tab-btn active" data-tab="knowledgebase">📖 คู่มือ 115 kV</button>
+    <button class="tab-btn active" data-tab="onsite">🚧 คู่มือปฏิบัติงาน</button>
+    <button class="tab-btn" data-tab="checklists">✅ เช็คลิสต์ก่อสร้าง</button>
+    <button class="tab-btn" data-tab="material">🛒 คำนวณสั่งวัสดุ 1:2:4</button>
     <button class="tab-btn" data-tab="tools">🧰 เครื่องมือ 57 ชนิด</button>
-    <button class="tab-btn" data-tab="sagtension">📐 คำนวณ Sag & Tension</button>
-    <button class="tab-btn" data-tab="clearance">📏 เช็กระยะปลอดภัย 115kV</button>
-    <button class="tab-btn" data-tab="piles">🪵 เสาเข็ม 4 ประเภท</button>
-    <button class="tab-btn" data-tab="specs">🏗️ ประเภทฐานราก</button>
-    <button class="tab-btn" data-tab="calculator">🧮 ประมาณการก่อสร้าง</button>
+    <button class="tab-btn" data-tab="sagtension">📐 Sag & Tension</button>
+    <button class="tab-btn" data-tab="clearance">📏 ระยะปลอดภัย</button>
+    <button class="tab-btn" data-tab="knowledgebase">📖 คู่มือ 115 kV</button>
   </nav>
 
   <main>
+    <!-- TAB: On-Site Guide -->
+    <section id="tab-onsite" class="tab-content active">
+      <div class="specs-header">
+        <h3>🚧 คู่มือปฏิบัติงานหน้างาน (Step-by-Step On-Site Guide)</h3>
+        <p>ขั้นตอนการก่อสร้างฐานรากแบบเจาะลึก อิงตามมาตรฐานวิศวกรรม 115 kV</p>
+      </div>
+      <div class="onsite-grid" id="onsiteGrid">
+        <!-- Injected by script.js -->
+      </div>
+    </section>
+
+    <!-- TAB: Checklists -->
+    <section id="tab-checklists" class="tab-content">
+      <div class="specs-header">
+        <h3>✅ เช็คลิสต์ตรวจสอบงานก่อสร้าง (Construction Checklists)</h3>
+        <p>รายการตรวจสอบข้อกำหนดความปลอดภัยและมาตรฐานหน้าไซต์งาน</p>
+      </div>
+      <div class="checklists-container" id="checklistsContainer">
+        <!-- Injected by script.js -->
+      </div>
+    </section>
+
+    <!-- TAB: Material Calculator 1:2:4 -->
+    <section id="tab-material" class="tab-content">
+      <div class="calculator-card">
+        <div class="calc-header">
+          <h3>🛒 เครื่องมือคำนวณสั่งวัสดุก่อสร้างหน้างาน (Material Calculator)</h3>
+          <p>คำนวณปริมาณปูนซีเมนต์ ทราย หิน สำหรับส่วนผสมคอนกรีต 1:2:4 (Structural) และ 1:3:5 (Lean)</p>
+        </div>
+
+        <form id="materialForm" class="calc-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="selectMatFoundation">รูปแบบฐานราก กฟภ.:</label>
+            <select id="selectMatFoundation" class="form-control">
+              <!-- Options injected by script.js -->
+            </select>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="inputMatQuantity">จำนวนชุด (หลุม):</label>
+              <input type="number" id="inputMatQuantity" class="form-control" value="1" min="1">
+            </div>
+            <div class="form-group">
+              <label>สัดส่วนผสม:</label>
+              <input type="text" class="form-control" value="1:2:4 (กำลังอัด 210 ksc)" disabled>
+            </div>
+          </div>
+        </form>
+
+        <div class="calc-results" id="materialResults">
+          <h4>📊 วัสดุที่ต้องสั่งซื้อสำหรับงานเทคอนกรีต (Required Materials)</h4>
+          <div class="results-grid">
+            <div class="result-box total-cost">
+              <span class="res-label">ปริมาณคอนกรีตที่ต้องใช้รวม</span>
+              <span class="res-value" id="resTotalConcrete">0 ลบ.ม.</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">ปูนซีเมนต์ (ปอร์ตแลนด์ มอก.15)</span>
+              <span class="res-value" id="resCementBags">0 ถุง (50กก.)</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">ทรายหยาบ (Sand)</span>
+              <span class="res-value" id="resSandCube">0 คิว (ลบ.ม.)</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">หิน (Stone/Gravel)</span>
+              <span class="res-value" id="resStoneCube">0 คิว (ลบ.ม.)</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">น้ำ (Water)</span>
+              <span class="res-value" id="resWater">0 ลิตร</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">ทรายรองก้นหลุม/กลบดิน</span>
+              <span class="res-value" id="resExtraSand">0 คิว (ลบ.ม.)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- TAB 1: Knowledgebase -->
-    <section id="tab-knowledgebase" class="tab-content active">
+    <section id="tab-knowledgebase" class="tab-content">
       <div class="search-filter-section">
         <div class="search-box">
           <span class="search-icon">🔍</span>
@@ -176,116 +258,6 @@
       </div>
     </section>
 
-    <!-- TAB 5: Piles Specifications -->
-    <section id="tab-piles" class="tab-content">
-      <div class="specs-header">
-        <h3>🪵 รายละเอียดคุณลักษณะเสาเข็มคอนกรีตอัดแรง 4 ประเภท</h3>
-        <p>ขนาด 0.44 x 0.44 ม. (ความยาว 8.50 ม. และ 14.00 ม.) รับโมเมนต์ใช้งานไม่น้อยกว่า 14,000 กก.-ม.</p>
-      </div>
-
-      <div class="piles-grid" id="pilesGrid">
-        <!-- Injected by script.js -->
-      </div>
-    </section>
-
-    <!-- TAB 6: Foundation Specs Table -->
-    <section id="tab-specs" class="tab-content">
-      <div class="specs-header">
-        <h3>ตารางเปรียบเทียบรูปแบบและสเปกฐานรากเสา คอร. 22 เมตร</h3>
-        <p>แสดงข้อมูลขนาด ปริมาณวัสดุ การรับน้ำหนักดิน และเลขที่แบบมาตรฐาน กฟภ.</p>
-      </div>
-      <div class="table-responsive">
-        <table class="specs-table">
-          <thead>
-            <tr>
-              <th>รหัส / แบบ</th>
-              <th>ชื่อรูปแบบฐานราก</th>
-              <th>ประเภท</th>
-              <th>ขนาด (กxยxส)</th>
-              <th>คอนกรีต</th>
-              <th>เหล็กเสริม</th>
-              <th>การรับน้ำหนักดิน</th>
-              <th>เลขที่แบบอ้างอิง</th>
-            </tr>
-          </thead>
-          <tbody id="specsTableBody">
-            <!-- Injected by script.js -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TAB 7: Estimator Calculator -->
-    <section id="tab-calculator" class="tab-content">
-      <div class="calculator-card">
-        <div class="calc-header">
-          <h3>🧮 เครื่องมือคำนวณปริมาณวัสดุและประมาณการค่าก่อสร้าง</h3>
-          <p>เลือกรูปแบบฐานรากและระยะปรับต่างระดับดิน (VARY) เพื่อประมาณการค่าวัสดุ ค่าแรง และปริมาณคอนกรีต/ทราย</p>
-        </div>
-
-        <form id="calcForm" class="calc-form" onsubmit="return false;">
-          <div class="form-group">
-            <label for="selectModel">รูปแบบฐานรากมาตรฐาน กฟภ.:</label>
-            <select id="selectModel" class="form-control">
-              <!-- Options injected by script.js -->
-            </select>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="selectVary">ระยะต่างระดับดิน (VARY):</label>
-              <select id="selectVary" class="form-control">
-                <option value="0.00">0.00 ม. (ระดับดินปกติ)</option>
-                <option value="0.50">0.50 ม.</option>
-                <option value="1.00">1.00 ม.</option>
-                <option value="1.50">1.50 ม.</option>
-                <option value="2.00">2.00 ม.</option>
-                <option value="2.50">2.50 ม.</option>
-                <option value="3.00">3.00 ม. (ต่างระดับสูงสุด)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="inputQuantity">จำนวนชุดฐานราก:</label>
-              <input type="number" id="inputQuantity" class="form-control" value="1" min="1" max="100">
-            </div>
-          </div>
-        </form>
-
-        <div class="calc-results" id="calcResults">
-          <h4>📊 ผลการประมาณการก่อสร้าง (Estimated Quantities & Cost)</h4>
-          <div class="results-grid">
-            <div class="result-box total-cost">
-              <span class="res-label">ประมาณการราคารวม</span>
-              <span class="res-value" id="resTotalCost">0 บาท</span>
-            </div>
-            <div class="result-box">
-              <span class="res-label">ประมาณการค่าวัสดุสิ่งของ</span>
-              <span class="res-value" id="resMaterialCost">0 บาท</span>
-            </div>
-            <div class="result-box">
-              <span class="res-label">ประมาณการค่าแรงงาน</span>
-              <span class="res-value" id="resLaborCost">0 บาท</span>
-            </div>
-            <div class="result-box">
-              <span class="res-label">ปริมาณคอนกรีตที่ใช้</span>
-              <span class="res-value" id="resConcreteVol">0 ลบ.ม.</span>
-            </div>
-            <div class="result-box">
-              <span class="res-label">น้ำหนักเหล็กเสริมโดยประมาณ</span>
-              <span class="res-value" id="resRebarWeight">0 กก.</span>
-            </div>
-            <div class="result-box">
-              <span class="res-label">ปริมาณทรายหยาบอัดแน่น</span>
-              <span class="res-value" id="resSandVol">0 ลบ.ม.</span>
-            </div>
-          </div>
-          <div class="ref-drawing-box">
-            <span>📌 เลขที่แบบแปลนมาตรฐานอ้างอิง: <strong id="resDrawingNo">-</strong></span>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>

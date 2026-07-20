@@ -41,6 +41,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   const resSandVol = document.getElementById('resSandVol');
   const resDrawingNo = document.getElementById('resDrawingNo');
 
+  // New On-Site & Material Elements
+  const onsiteGrid = document.getElementById('onsiteGrid');
+  const checklistsContainer = document.getElementById('checklistsContainer');
+  const selectMatFoundation = document.getElementById('selectMatFoundation');
+  const inputMatQuantity = document.getElementById('inputMatQuantity');
+  const resTotalConcrete = document.getElementById('resTotalConcrete');
+  const resCementBags = document.getElementById('resCementBags');
+  const resSandCube = document.getElementById('resSandCube');
+  const resStoneCube = document.getElementById('resStoneCube');
+  const resWater = document.getElementById('resWater');
+  const resExtraSand = document.getElementById('resExtraSand');
+
   // Sag & Tension Elements
   const selectConductor = document.getElementById('selectConductor');
   const inputSpan = document.getElementById('inputSpan');
@@ -79,6 +91,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderPilesGrid();
     renderSpecsTable();
     renderClearancesAndRaking();
+    
+    // Render New Sections
+    renderOnSiteGuide();
+    renderChecklists();
+    initMaterialCalculator();
+    
     initCalculator();
     initSagCalculator();
   }
@@ -250,6 +268,79 @@ document.addEventListener('DOMContentLoaded', async () => {
         </li>
       `).join('');
     }
+  }
+
+  // --- RENDER ON-SITE GUIDE ---
+  function renderOnSiteGuide() {
+    if (!onsiteGrid || typeof onSiteGuideData === 'undefined') return;
+    
+    onsiteGrid.innerHTML = onSiteGuideData.map(step => `
+      <div class="onsite-card">
+        <div class="step-badge">${step.step}</div>
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${step.icon}</div>
+        <h4 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">${step.task}</h4>
+        <p style="font-size: 0.9rem; opacity: 0.9;">${step.details}</p>
+      </div>
+    `).join('');
+  }
+
+  // --- RENDER CHECKLISTS ---
+  function renderChecklists() {
+    if (!checklistsContainer || typeof checklistData === 'undefined') return;
+    
+    checklistsContainer.innerHTML = checklistData.map((category, idx) => `
+      <div class="checklist-card">
+        <h4>${category.category}</h4>
+        <div class="checklist-items">
+          ${category.items.map((item, i) => `
+            <div class="check-item">
+              <input type="checkbox" id="chk_${idx}_${i}">
+              <label for="chk_${idx}_${i}">${item}</label>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // --- MATERIAL CALCULATOR (1:2:4 Mix) ---
+  function initMaterialCalculator() {
+    if (!selectMatFoundation || typeof foundationTypes === 'undefined') return;
+
+    selectMatFoundation.innerHTML = foundationTypes.map(f => `
+      <option value="${f.code}">${f.code} - ${f.name} (คอนกรีต ${f.concreteVol} คิว)</option>
+    `).join('');
+
+    function calculateMaterials() {
+      const fCode = selectMatFoundation.value;
+      const qty = parseInt(inputMatQuantity.value) || 1;
+      const foundation = foundationTypes.find(f => f.code === fCode);
+      if (!foundation) return;
+
+      const totalConcrete = foundation.concreteVol * qty; // Cubic Meters
+
+      // Structural Concrete 1:2:4 per m3 (320kg cement, 0.45 sand, 0.90 stone, 180L water)
+      // Note: 1 bag of Portland cement is 50kg. So 320kg = 6.4 bags per m3.
+      const cementBags = Math.ceil((320 * totalConcrete) / 50);
+      const sandCube = (0.45 * totalConcrete).toFixed(2);
+      const stoneCube = (0.90 * totalConcrete).toFixed(2);
+      const waterLiters = Math.round(180 * totalConcrete);
+      
+      // Lean concrete & sand base (rough estimate: 0.6 m3 per foundation base)
+      const extraSand = (0.60 * qty).toFixed(2);
+
+      resTotalConcrete.textContent = `${totalConcrete.toFixed(2)} ลบ.ม. (คิว)`;
+      resCementBags.textContent = `${cementBags.toLocaleString('th-TH')} ถุง (50กก.)`;
+      resSandCube.textContent = `${sandCube} คิว (ลบ.ม.)`;
+      resStoneCube.textContent = `${stoneCube} คิว (ลบ.ม.)`;
+      resWater.textContent = `${waterLiters.toLocaleString('th-TH')} ลิตร`;
+      resExtraSand.textContent = `${extraSand} คิว (ลบ.ม.)`;
+    }
+
+    selectMatFoundation.addEventListener('change', calculateMaterials);
+    inputMatQuantity.addEventListener('input', calculateMaterials);
+
+    calculateMaterials();
   }
 
   // --- SAG & TENSION CALCULATOR (T = W * l^2 / 8s) ---
