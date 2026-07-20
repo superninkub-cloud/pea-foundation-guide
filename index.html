@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>คู่มือก่อสร้างและระบบประมาณการฐานรากเสาไฟฟ้า 22 เมตร | PEA Foundation Guide</title>
+  <title>ระบบวิศวกรรมเทคนิคการก่อสร้างสายส่ง 115 kV และฐานราก | PEA 115kV Engineering Suite</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 <body>
   <header>
     <div class="logo-container">
-      <h1>⚡ PEA Foundation Guide</h1>
+      <h1>⚡ PEA 115 kV Suite</h1>
     </div>
     <div class="header-actions">
       <button class="settings-btn" id="settingsBtn" title="ตั้งค่าระบบฐานข้อมูล Supabase">⚙️ เชื่อมต่อ Supabase</button>
@@ -21,8 +21,8 @@
   </header>
 
   <section class="hero">
-    <h2>คู่มือการก่อสร้างและประมาณการฐานรากเสาไฟฟ้า</h2>
-    <p>สรุปข้อกำหนดทางวิศวกรรม มาตรฐานงานโยธา เสาเข็ม 4 ประเภท และระบบคำนวณปริมาณวัสดุฐานรากเสา คอร. 22 เมตร อ้างอิงการไฟฟ้าส่วนภูมิภาค</p>
+    <h2>เทคนิคการก่อสร้างสายส่งระบบ 115 kV & ระบบวิศวกรรมฐานราก</h2>
+    <p>ศูนย์รวมข้อมูลวิศวกรรมการก่อสร้างสายส่ง 115 kV คลังเครื่องมือ 57 รายการ ระบบคำนวณระยะหย่อนยานแรงดึงสาย (Sag & Tension) และประมาณการก่อสร้าง กฟภ.</p>
     <div class="db-status-badge" id="dbStatusBadge">
       <span class="status-dot"></span>
       <span id="dbStatusText">สถานะฐานข้อมูล: ใช้ข้อมูลสำรอง (Static Data)</span>
@@ -31,10 +31,13 @@
 
   <!-- Navigation Tabs -->
   <nav class="nav-tabs-container">
-    <button class="tab-btn active" data-tab="knowledgebase">📖 คู่มือ & ข้อกำหนด</button>
+    <button class="tab-btn active" data-tab="knowledgebase">📖 คู่มือ 115 kV</button>
+    <button class="tab-btn" data-tab="tools">🧰 เครื่องมือ 57 ชนิด</button>
+    <button class="tab-btn" data-tab="sagtension">📐 คำนวณ Sag & Tension</button>
+    <button class="tab-btn" data-tab="clearance">📏 เช็กระยะปลอดภัย 115kV</button>
     <button class="tab-btn" data-tab="piles">🪵 เสาเข็ม 4 ประเภท</button>
-    <button class="tab-btn" data-tab="specs">🏗️ ประเภทฐานรากวิศวกรรม</button>
-    <button class="tab-btn" data-tab="calculator">🧮 เครื่องมือคำนวณประมาณการ</button>
+    <button class="tab-btn" data-tab="specs">🏗️ ประเภทฐานราก</button>
+    <button class="tab-btn" data-tab="calculator">🧮 ประมาณการก่อสร้าง</button>
   </nav>
 
   <main>
@@ -43,16 +46,16 @@
       <div class="search-filter-section">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" placeholder="ค้นหาข้อกำหนด, เสาเข็มประเภท 1-4, กำลังอัด, 180 กก., IB2-011...">
+          <input type="text" id="searchInput" placeholder="ค้นหาข้อกำหนด, ปักเสา, พาดสาย, กำลังอัด, 180 กก., IB2-011...">
         </div>
         <div class="filter-pills" id="filterPills">
           <button class="pill active" data-filter="all">ทั้งหมด</button>
           <button class="pill" data-filter="general">ข้อกำหนดทั่วไป</button>
-          <button class="pill" data-filter="piles">เสาเข็ม 4 ประเภท</button>
-          <button class="pill" data-filter="precast">ฐานรากสำเร็จรูป</button>
-          <button class="pill" data-filter="cast_in_place">ฐานรากหล่อในที่</button>
-          <button class="pill" data-filter="anchor">สมอบกยึดโยง</button>
-          <button class="pill" data-filter="highway">ข้อกำหนดทางหลวง</button>
+          <button class="pill" data-filter="tools">เครื่องมือก่อสร้าง</button>
+          <button class="pill" data-filter="survey">วัดระยะเล็งแนว</button>
+          <button class="pill" data-filter="foundation_tech">งานฐานราก</button>
+          <button class="pill" data-filter="erection">งานปักเสา</button>
+          <button class="pill" data-filter="stringing">งานพาดสาย 115kV</button>
         </div>
       </div>
 
@@ -61,7 +64,119 @@
       </div>
     </section>
 
-    <!-- TAB 2: Piles Specifications -->
+    <!-- TAB 2: 57 Construction Tools Catalog -->
+    <section id="tab-tools" class="tab-content">
+      <div class="specs-header">
+        <h3>🧰 คลังเครื่องมือและอุปกรณ์ก่อสร้างสายส่ง 115 kV (57 รายการ)</h3>
+        <p>ค้นหา ดูวิธีการใช้งาน ข้อควรระวัง และการบำรุงรักษาตามมาตรฐาน กฟภ.</p>
+      </div>
+
+      <div class="search-filter-section">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="toolSearchInput" placeholder="ค้นชื่อเครื่องมือ เช่น ไดโว่, คอฟฟิ่งฮอยส์, ไดนาโมมิเตอร์, สลิง...">
+        </div>
+        <div class="filter-pills" id="toolFilterPills">
+          <button class="pill active" data-tool-filter="all">ทั้งหมด (57 รายการ)</button>
+          <button class="pill" data-tool-filter="survey">1. เครื่องมือวางแนว</button>
+          <button class="pill" data-tool-filter="foundation">2. ก่อสร้างฐานราก</button>
+          <button class="pill" data-tool-filter="erection">3. งานปักเสา</button>
+          <button class="pill" data-tool-filter="stringing">4. งานพาดสาย</button>
+        </div>
+      </div>
+
+      <div class="tools-grid" id="toolsGrid">
+        <!-- Injected by script.js -->
+      </div>
+    </section>
+
+    <!-- TAB 3: Sag & Tension Calculator -->
+    <section id="tab-sagtension" class="tab-content">
+      <div class="calculator-card" style="max-width: 950px;">
+        <div class="calc-header">
+          <h3>📐 เครื่องมือคำนวณแรงดึงและระยะหย่อนยานสายไฟฟ้า (Sag & Tension Calculator)</h3>
+          <p>คำนวณแรงดึงสายส่ง 115 kV ตามสูตรวิศวกรรม กฟภ. หน้า 190: <code>T = (W * l²) / (8 * s)</code></p>
+        </div>
+
+        <form id="sagForm" class="calc-form" onsubmit="return false;">
+          <div class="form-group">
+            <label for="selectConductor">ชนิดและขนาดสายไฟฟ้า (Conductor Type):</label>
+            <select id="selectConductor" class="form-control">
+              <!-- Options injected by script.js -->
+            </select>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="inputSpan">ระยะช่วงเสา (Span Length - l):</label>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="number" id="inputSpan" class="form-control" value="80" min="10" max="500" step="1">
+                <span>เมตร</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="inputSag">ระยะหย่อนยานของสาย (Sag - s):</label>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="number" id="inputSag" class="form-control" value="0.80" min="0.1" max="10" step="0.05">
+                <span>เมตร</span>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="calc-results" id="sagResults">
+          <h4>📊 ผลการคำนวณแรงดึงสายส่ง (Sag & Tension Calculation Results)</h4>
+          <div class="results-grid">
+            <div class="result-box total-cost">
+              <span class="res-label">แรงดึงของสายไฟ (Tension - T)</span>
+              <span class="res-value" id="resTension">0 กก.</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">น้ำหนักสายต่อเมตร (W)</span>
+              <span class="res-value" id="resCondWeight">0 กก./ม.</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">แรงดึงสูงสุดพิกัด (Max Tension)</span>
+              <span class="res-value" id="resMaxTension">0 กก.</span>
+            </div>
+            <div class="result-box">
+              <span class="res-label">สถานะความปลอดภัย (Safety Status)</span>
+              <span class="res-value" id="resSafetyStatus" style="font-size: 1.1rem; color: #2ed573;">✓ ปลอดภัยตามเกณฑ์</span>
+            </div>
+          </div>
+          <div class="ref-drawing-box">
+            <span>📌 ข้อมูลอ้างอิง: สูตรคำนวณคู่มือเทคนิค กฟภ. หน้า 190, ตาราง Sag Curves SA02-015/19089 (สาย 400 ตร.มม. ที่อุณหภูมิ 35-40°C)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: Safe Clearance & Raking Verification -->
+    <section id="tab-clearance" class="tab-content">
+      <div class="specs-header">
+        <h3>📏 ตรวจสอบระยะห่างความปลอดภัย (115 kV Clearances) & ระยะเอียงเสา (Raking)</h3>
+        <p>ข้อกำหนดระยะห่างขั้นต่ำตามมาตรฐานความปลอดภัย กฟภ. (SA2-015/45017)</p>
+      </div>
+
+      <div class="grid-container" style="margin-bottom: 2rem;">
+        <div class="calculator-card" style="margin: 0; width: 100%;">
+          <h4 style="color: var(--primary-color); margin-bottom: 1rem;">🛡️ ระยะห่างปลอดภัยขั้นต่ำ (Safe Clearances)</h4>
+          <ul class="specs-list" id="clearancesList">
+            <!-- Injected by script.js -->
+          </ul>
+        </div>
+
+        <div class="calculator-card" style="margin: 0; width: 100%;">
+          <h4 style="color: var(--primary-color); margin-bottom: 1rem;">📐 ระยะค่าเผื่อการเอียงของเสา (Raking Allowances)</h4>
+          <ul class="specs-list" id="rakingList">
+            <!-- Injected by script.js -->
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: Piles Specifications -->
     <section id="tab-piles" class="tab-content">
       <div class="specs-header">
         <h3>🪵 รายละเอียดคุณลักษณะเสาเข็มคอนกรีตอัดแรง 4 ประเภท</h3>
@@ -73,7 +188,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: Foundation Specs Table -->
+    <!-- TAB 6: Foundation Specs Table -->
     <section id="tab-specs" class="tab-content">
       <div class="specs-header">
         <h3>ตารางเปรียบเทียบรูปแบบและสเปกฐานรากเสา คอร. 22 เมตร</h3>
@@ -100,7 +215,7 @@
       </div>
     </section>
 
-    <!-- TAB 4: Estimator Calculator -->
+    <!-- TAB 7: Estimator Calculator -->
     <section id="tab-calculator" class="tab-content">
       <div class="calculator-card">
         <div class="calc-header">
@@ -174,7 +289,7 @@
   </main>
 
   <footer>
-    <p>&copy; 2026 PEA Foundation Guide. ข้อมูลอ้างอิงจากคู่มือมาตรฐานการก่อสร้างสายส่งไฟฟ้าแรงสูง 115 กิโลโวลต์ การไฟฟ้าส่วนภูมิภาค</p>
+    <p>&copy; 2026 PEA 115 kV Suite. ข้อมูลอ้างอิงจากคู่มือเทคนิคการก่อสร้างสายส่งระบบ 115 เควี. การไฟฟ้าส่วนภูมิภาค (กองก่อสร้างระบบไฟฟ้า)</p>
   </footer>
 
   <!-- Detail Modal -->

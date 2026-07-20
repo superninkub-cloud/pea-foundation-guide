@@ -2,8 +2,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Elements
   const cardContainer = document.getElementById('cardContainer');
   const pilesGrid = document.getElementById('pilesGrid');
+  const toolsGrid = document.getElementById('toolsGrid');
   const searchInput = document.getElementById('searchInput');
   const filterPills = document.getElementById('filterPills');
+  const toolSearchInput = document.getElementById('toolSearchInput');
+  const toolFilterPills = document.getElementById('toolFilterPills');
   const modalOverlay = document.getElementById('modalOverlay');
   const modalTitle = document.getElementById('modalTitle');
   const modalContent = document.getElementById('modalContent');
@@ -38,7 +41,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const resSandVol = document.getElementById('resSandVol');
   const resDrawingNo = document.getElementById('resDrawingNo');
 
+  // Sag & Tension Elements
+  const selectConductor = document.getElementById('selectConductor');
+  const inputSpan = document.getElementById('inputSpan');
+  const inputSag = document.getElementById('inputSag');
+  const resTension = document.getElementById('resTension');
+  const resCondWeight = document.getElementById('resCondWeight');
+  const resMaxTension = document.getElementById('resMaxTension');
+  const resSafetyStatus = document.getElementById('resSafetyStatus');
+
   let currentFilter = 'all';
+  let currentToolFilter = 'all';
   let currentFoundationData = [];
   let currentFoundationTypes = [];
   let currentPriceSpecs = [];
@@ -62,9 +75,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     updateDbStatus();
     renderCards();
+    renderToolsGrid();
     renderPilesGrid();
     renderSpecsTable();
+    renderClearancesAndRaking();
     initCalculator();
+    initSagCalculator();
   }
 
   // --- TAB NAVIGATION ---
@@ -75,7 +91,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       btn.classList.add('active');
       const targetTab = btn.getAttribute('data-tab');
-      document.getElementById(`tab-${targetTab}`).classList.add('active');
+      const targetSec = document.getElementById(`tab-${targetTab}`);
+      if (targetSec) targetSec.classList.add('active');
     });
   });
 
@@ -124,6 +141,71 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // --- RENDER 57 TOOLS CATALOG ---
+  function renderToolsGrid() {
+    if (!toolsGrid || typeof toolsCatalogData === 'undefined') return;
+    toolsGrid.innerHTML = '';
+
+    const query = toolSearchInput ? toolSearchInput.value.toLowerCase().trim() : '';
+
+    const filtered = toolsCatalogData.filter(tool => {
+      const matchesCat = currentToolFilter === 'all' || tool.category === currentToolFilter;
+      const matchesQ = query === '' ||
+        tool.name.toLowerCase().includes(query) ||
+        tool.usage.toLowerCase().includes(query) ||
+        tool.caution.toLowerCase().includes(query) ||
+        tool.maintenance.toLowerCase().includes(query);
+      
+      return matchesCat && matchesQ;
+    });
+
+    if (filtered.length === 0) {
+      toolsGrid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 3rem; opacity: 0.7;">
+          <p style="font-size: 1.2rem;">ไม่พบเครื่องมือที่ตรงกับคำค้นหา "${query}"</p>
+        </div>
+      `;
+      return;
+    }
+
+    filtered.forEach(tool => {
+      const card = document.createElement('div');
+      card.classList.add('tool-card');
+      card.innerHTML = `
+        <div class="tool-header">
+          <span class="tool-id-badge">ลำดับที่ ${tool.id}</span>
+        </div>
+        <h4>${tool.name}</h4>
+        <div class="tool-info-section">
+          <strong>⚙️ การใช้งาน:</strong> ${tool.usage}
+        </div>
+        <div class="caution-box">
+          <strong>⚠️ ข้อควรระวัง:</strong> ${tool.caution}
+        </div>
+        <div class="maint-box">
+          <strong>🛠️ การบำรุงรักษา:</strong> ${tool.maintenance}
+        </div>
+      `;
+      toolsGrid.appendChild(card);
+    });
+  }
+
+  // Tool Filters & Search
+  if (toolFilterPills) {
+    toolFilterPills.addEventListener('click', (e) => {
+      if (e.target.classList.contains('pill')) {
+        toolFilterPills.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        e.target.classList.add('active');
+        currentToolFilter = e.target.getAttribute('data-tool-filter');
+        renderToolsGrid();
+      }
+    });
+  }
+
+  if (toolSearchInput) {
+    toolSearchInput.addEventListener('input', renderToolsGrid);
+  }
+
   // --- RENDER PILES GRID (4 TYPES) ---
   function renderPilesGrid() {
     if (!pilesGrid || typeof pileTypesData === 'undefined') return;
@@ -144,6 +226,72 @@ document.addEventListener('DOMContentLoaded', async () => {
     `).join('');
   }
 
+  // --- RENDER CLEARANCES & RAKING ---
+  function renderClearancesAndRaking() {
+    const clearancesList = document.getElementById('clearancesList');
+    const rakingList = document.getElementById('rakingList');
+
+    if (clearancesList && typeof clearanceRulesData !== 'undefined') {
+      clearancesList.innerHTML = clearanceRulesData.clearances.map(c => `
+        <li class="spec-item-box">
+          <strong>${c.title}</strong>
+          <span style="font-size: 1.1rem; font-weight: 700; color: #2ed573;">กำหนดไว้ไม่น้อยกว่า: ${c.required}</span>
+          <p style="font-size: 0.85rem; opacity: 0.85; margin-top: 0.3rem;">${c.detail}</p>
+        </li>
+      `).join('');
+    }
+
+    if (rakingList && typeof clearanceRulesData !== 'undefined') {
+      rakingList.innerHTML = clearanceRulesData.raking.map(r => `
+        <li class="spec-item-box">
+          <strong>${r.type}</strong>
+          <span style="font-size: 1.1rem; font-weight: 700; color: var(--secondary-color);">ระยะเอียงเผื่อ (Offset): ${r.offset}</span>
+          <p style="font-size: 0.85rem; opacity: 0.85; margin-top: 0.3rem;">ทิศทาง: ${r.direction}</p>
+        </li>
+      `).join('');
+    }
+  }
+
+  // --- SAG & TENSION CALCULATOR (T = W * l^2 / 8s) ---
+  function initSagCalculator() {
+    if (!selectConductor || typeof sagConductorData === 'undefined') return;
+
+    selectConductor.innerHTML = sagConductorData.map(c => `
+      <option value="${c.id}">${c.name} (${c.desc})</option>
+    `).join('');
+
+    function calculateSag() {
+      const condId = selectConductor.value;
+      const span = parseFloat(inputSpan.value) || 80;
+      const sag = parseFloat(inputSag.value) || 0.8;
+
+      const cond = sagConductorData.find(c => c.id === condId);
+      if (!cond || sag <= 0) return;
+
+      // Formula: T = (W * l^2) / (8 * s)
+      const tension = (cond.weightPerMeter * Math.pow(span, 2)) / (8 * sag);
+      const roundedTension = Math.round(tension);
+
+      resTension.textContent = `${roundedTension.toLocaleString('th-TH')} กก.`;
+      resCondWeight.textContent = `${cond.weightPerMeter} กก./ม.`;
+      resMaxTension.textContent = `${cond.maxTension.toLocaleString('th-TH')} กก.`;
+
+      if (roundedTension <= cond.maxTension) {
+        resSafetyStatus.textContent = "✓ ปลอดภัยตามพิกัดรับแรง";
+        resSafetyStatus.style.color = "#2ed573";
+      } else {
+        resSafetyStatus.textContent = "⚠️ เกินพิกัดแรงดึงสูงสุด! ควรเพิ่มระยะ Sag";
+        resSafetyStatus.style.color = "#ff4757";
+      }
+    }
+
+    selectConductor.addEventListener('change', calculateSag);
+    inputSpan.addEventListener('input', calculateSag);
+    inputSag.addEventListener('input', calculateSag);
+
+    calculateSag();
+  }
+
   // --- FILTER PILLS ---
   if (filterPills) {
     filterPills.addEventListener('click', (e) => {
@@ -152,10 +300,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         e.target.classList.add('active');
         currentFilter = e.target.getAttribute('data-filter');
 
-        // If 'piles' clicked, switch tab or filter
         if (currentFilter === 'piles') {
           const pilesTabBtn = document.querySelector('.tab-btn[data-tab="piles"]');
           if (pilesTabBtn) pilesTabBtn.click();
+        } else if (currentFilter === 'tools') {
+          const toolsTabBtn = document.querySelector('.tab-btn[data-tab="tools"]');
+          if (toolsTabBtn) toolsTabBtn.click();
         }
         renderCards();
       }
