@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คู่มือก่อสร้างฐานรากเสาไฟฟ้า 22 เมตร | PEA Foundation Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <h1>⚡ PEA Foundation Guide</h1>
+    </div>
+    <button class="theme-toggle" id="themeToggle" title="Toggle Theme">🌙</button>
+  </header>
+
+  <section class="hero">
+    <h2>คู่มือการก่อสร้างฐานรากเสาไฟฟ้า</h2>
+    <p>สรุปวิธีการก่อสร้างและข้อกำหนดที่สำคัญในการก่อสร้างฐานรากเสาไฟฟ้าคอนกรีตอัดแรง ขนาด 22 เมตร อ้างอิงจากคู่มือมาตรฐานของการไฟฟ้าส่วนภูมิภาค</p>
+  </section>
+
+  <main>
+    <div class="grid-container" id="cardContainer">
+      <!-- Cards will be injected here by script.js -->
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 PEA Foundation Guide. ข้อมูลอ้างอิงจากคู่มือมาตรฐานการก่อสร้างสายส่งไฟฟ้าแรงสูง 115 กิโลโวลต์</p>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <button class="close-btn" id="closeBtn">✖</button>
+      <h3 class="modal-title" id="modalTitle"></h3>
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
