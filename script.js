@@ -340,11 +340,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       const baseCost = matCost + labCost;
       const totalNetPrice = Math.round(baseCost * factorF);
 
-      resTotalNetPrice.textContent = \`\${totalNetPrice.toLocaleString('th-TH')} บาท\`;
-      resBaseCost.textContent = \`\${baseCost.toLocaleString('th-TH')} บาท\`;
-      resTotalMatCost.textContent = \`\${matCost.toLocaleString('th-TH')} บาท\`;
-      resTotalLabCost.textContent = \`\${labCost.toLocaleString('th-TH')} บาท\`;
-      resFactorF.textContent = \`\${factorF} (สำหรับค่างานต้นทุน \${baseCost.toLocaleString('th-TH')} บาท)\`;
+      resTotalNetPrice.textContent = `${totalNetPrice.toLocaleString('th-TH')} บาท`;
+      resBaseCost.textContent = `${baseCost.toLocaleString('th-TH')} บาท`;
+      resTotalMatCost.textContent = `${matCost.toLocaleString('th-TH')} บาท`;
+      resTotalLabCost.textContent = `${labCost.toLocaleString('th-TH')} บาท`;
+      resFactorF.textContent = `${factorF} (สำหรับค่างานต้นทุน ${baseCost.toLocaleString('th-TH')} บาท)`;
     }
 
     selectMatFoundation.addEventListener('change', calculateCosts);
