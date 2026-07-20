@@ -150,10 +150,11 @@ header {
   justify-content: center;
   gap: 1rem;
   margin: -1.5rem auto 2rem;
-  max-width: 900px;
+  max-width: 950px;
   padding: 0 1rem;
   z-index: 10;
   position: relative;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
@@ -163,7 +164,7 @@ header {
   padding: 0.8rem 1.5rem;
   border-radius: 30px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: var(--transition);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -346,6 +347,67 @@ main {
   align-items: center;
   border-top: 1px solid var(--border-color);
   padding-top: 0.8rem;
+}
+
+/* Piles Grid & Cards */
+.piles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.pile-card {
+  background-color: var(--card-bg);
+  border-radius: 20px;
+  padding: 1.8rem;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.pile-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary-color);
+}
+
+.pile-badge {
+  display: inline-block;
+  align-self: flex-start;
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.pile-card h4 {
+  font-size: 1.15rem;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+.pile-spec-list {
+  list-style: none;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.pile-spec-list li {
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.pile-desc {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-top: auto;
+  line-height: 1.5;
 }
 
 /* Specs Table */

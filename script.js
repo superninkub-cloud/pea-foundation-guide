@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
   // Elements
   const cardContainer = document.getElementById('cardContainer');
+  const pilesGrid = document.getElementById('pilesGrid');
   const searchInput = document.getElementById('searchInput');
   const filterPills = document.getElementById('filterPills');
   const modalOverlay = document.getElementById('modalOverlay');
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     updateDbStatus();
     renderCards();
+    renderPilesGrid();
     renderSpecsTable();
     initCalculator();
   }
@@ -122,6 +124,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // --- RENDER PILES GRID (4 TYPES) ---
+  function renderPilesGrid() {
+    if (!pilesGrid || typeof pileTypesData === 'undefined') return;
+
+    pilesGrid.innerHTML = pileTypesData.map(pile => `
+      <div class="pile-card">
+        <span class="pile-badge">${pile.typeNo}</span>
+        <h4>${pile.name}</h4>
+        <ul class="pile-spec-list">
+          <li><strong>⚡ ระบบสายดิน:</strong> ${pile.groundWire}</li>
+          <li><strong>🛡️ เหล็กพิเศษหัวเข็ม:</strong> ${pile.specialHeadRebar}</li>
+          <li><strong>📐 ขนาดเสาเข็ม:</strong> ${pile.dimensions}</li>
+          <li><strong>💪 โมเมนต์ใช้งาน:</strong> ${pile.workingMoment}</li>
+          <li><strong>📌 แบบมาตรฐาน:</strong> <code>${pile.drawingNo}</code></li>
+        </ul>
+        <p class="pile-desc">${pile.description}</p>
+      </div>
+    `).join('');
+  }
+
   // --- FILTER PILLS ---
   if (filterPills) {
     filterPills.addEventListener('click', (e) => {
@@ -129,6 +151,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
         e.target.classList.add('active');
         currentFilter = e.target.getAttribute('data-filter');
+
+        // If 'piles' clicked, switch tab or filter
+        if (currentFilter === 'piles') {
+          const pilesTabBtn = document.querySelector('.tab-btn[data-tab="piles"]');
+          if (pilesTabBtn) pilesTabBtn.click();
+        }
         renderCards();
       }
     });

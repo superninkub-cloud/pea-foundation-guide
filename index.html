@@ -22,7 +22,7 @@
 
   <section class="hero">
     <h2>คู่มือการก่อสร้างและประมาณการฐานรากเสาไฟฟ้า</h2>
-    <p>สรุปข้อกำหนดทางวิศวกรรม มาตรฐานงานโยธา และระบบคำนวณปริมาณวัสดุฐานรากเสา คอร. 22 เมตร อ้างอิงการไฟฟ้าส่วนภูมิภาค</p>
+    <p>สรุปข้อกำหนดทางวิศวกรรม มาตรฐานงานโยธา เสาเข็ม 4 ประเภท และระบบคำนวณปริมาณวัสดุฐานรากเสา คอร. 22 เมตร อ้างอิงการไฟฟ้าส่วนภูมิภาค</p>
     <div class="db-status-badge" id="dbStatusBadge">
       <span class="status-dot"></span>
       <span id="dbStatusText">สถานะฐานข้อมูล: ใช้ข้อมูลสำรอง (Static Data)</span>
@@ -32,6 +32,7 @@
   <!-- Navigation Tabs -->
   <nav class="nav-tabs-container">
     <button class="tab-btn active" data-tab="knowledgebase">📖 คู่มือ & ข้อกำหนด</button>
+    <button class="tab-btn" data-tab="piles">🪵 เสาเข็ม 4 ประเภท</button>
     <button class="tab-btn" data-tab="specs">🏗️ ประเภทฐานรากวิศวกรรม</button>
     <button class="tab-btn" data-tab="calculator">🧮 เครื่องมือคำนวณประมาณการ</button>
   </nav>
@@ -42,11 +43,12 @@
       <div class="search-filter-section">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" placeholder="ค้นหาข้อกำหนด, กำลังอัด, ทางหลวง, 180 กก., IB2-011...">
+          <input type="text" id="searchInput" placeholder="ค้นหาข้อกำหนด, เสาเข็มประเภท 1-4, กำลังอัด, 180 กก., IB2-011...">
         </div>
         <div class="filter-pills" id="filterPills">
           <button class="pill active" data-filter="all">ทั้งหมด</button>
           <button class="pill" data-filter="general">ข้อกำหนดทั่วไป</button>
+          <button class="pill" data-filter="piles">เสาเข็ม 4 ประเภท</button>
           <button class="pill" data-filter="precast">ฐานรากสำเร็จรูป</button>
           <button class="pill" data-filter="cast_in_place">ฐานรากหล่อในที่</button>
           <button class="pill" data-filter="anchor">สมอบกยึดโยง</button>
@@ -59,7 +61,19 @@
       </div>
     </section>
 
-    <!-- TAB 2: Foundation Specs Table -->
+    <!-- TAB 2: Piles Specifications -->
+    <section id="tab-piles" class="tab-content">
+      <div class="specs-header">
+        <h3>🪵 รายละเอียดคุณลักษณะเสาเข็มคอนกรีตอัดแรง 4 ประเภท</h3>
+        <p>ขนาด 0.44 x 0.44 ม. (ความยาว 8.50 ม. และ 14.00 ม.) รับโมเมนต์ใช้งานไม่น้อยกว่า 14,000 กก.-ม.</p>
+      </div>
+
+      <div class="piles-grid" id="pilesGrid">
+        <!-- Injected by script.js -->
+      </div>
+    </section>
+
+    <!-- TAB 3: Foundation Specs Table -->
     <section id="tab-specs" class="tab-content">
       <div class="specs-header">
         <h3>ตารางเปรียบเทียบรูปแบบและสเปกฐานรากเสา คอร. 22 เมตร</h3>
@@ -86,7 +100,7 @@
       </div>
     </section>
 
-    <!-- TAB 3: Estimator Calculator -->
+    <!-- TAB 4: Estimator Calculator -->
     <section id="tab-calculator" class="tab-content">
       <div class="calculator-card">
         <div class="calc-header">
